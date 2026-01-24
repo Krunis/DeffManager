@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package grpcapi;
+
+option go_package = "github.com/krunis/DeffManager/grpcapi";
+
+enum TaskStatus {
+  STARTED = 0;
+  FAILED = 1;
+  COMPLETED = 2;
+}
+//Worker service 
+service WorkerService{
+    //Sends a task to worker
+    rpc SubmitTask(TaskRequest) returns (TaskResponse);
+}
+
+message TaskRequest{
+    string task_id = 1;
+    string command = 2;
+}
+
+message TaskResponse{
+    string task_id = 1;
+    bool success = 2;
+}
+
+//Coordinator service
+service CoordinatorService{
+    //Sends a heartbeat to coordinator
+    rpc SendHeartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+    //Sends an info for update task in DB
+    rpc UpdateTaskStatus(UpdateTaskStatusRequest) returns (UpdateTaskStatusResponse);
+}
+
+message HeartbeatRequest{
+    uint32 worker_id = 1;
+    string address = 2;
+}
+
+message HeartbeatResponse{
+    bool acknowledged = 1;
+}
+
+message UpdateTaskStatusRequest{
+    string task_id = 1;
+    TaskStatus status = 2;
+    int64 started_at = 3;
+    int64 completed_at = 4;
+    int64 failed_at = 5;
+}
+
+message UpdateTaskStatusResponse{
+    bool success = 1;
+}
