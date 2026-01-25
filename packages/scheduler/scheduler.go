@@ -31,9 +31,9 @@ type SchedulerServer struct {
 }
 
 type CommandRequest struct {
-	Command          string `json:"command"`
+	Command          string  `json:"command"`
 	MustBeExecute_At *string `json:"must_be_execute_at"`
-	Scheduled_At     string `json:"scheduled_at"`
+	Scheduled_At     string  `json:"scheduled_at"`
 }
 
 type Task struct {
@@ -81,9 +81,7 @@ func (s *SchedulerServer) Start() error {
 		}
 	}()
 
-	go func() {
-		errCh <- s.awaitShutdown()
-	}()
+	go s.awaitShutdown()
 
 	select {
 	case err = <-errCh:
@@ -140,10 +138,10 @@ func (s *SchedulerServer) handlePostTask(w http.ResponseWriter, r *http.Request)
 		}
 
 		response := struct {
-			Command          string `json:"command"`
-			MustBeExecute_At *string  `json:"must_be_execute_at,omitempty"`
-			Scheduled_At     *string  `json:"scheduled_at"`
-			TaskID           string `json:"task_id"`
+			Command          string  `json:"command"`
+			MustBeExecute_At *string `json:"must_be_execute_at,omitempty"`
+			Scheduled_At     *string `json:"scheduled_at"`
+			TaskID           string  `json:"task_id"`
 		}{
 			Command:          commandReq.Command,
 			MustBeExecute_At: formatPointedTime(mustBeExec_at),
@@ -189,33 +187,33 @@ func (s *SchedulerServer) handleGetTask(w http.ResponseWriter, r *http.Request) 
 			&task.CompletedAt,
 			&task.FailedAt,
 		)
-		if err != nil{
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		response := struct{
-			TaskID string `json:"task_id"`
-			Command string `json:"command"`
+		response := struct {
+			TaskID             string  `json:"task_id"`
+			Command            string  `json:"command"`
 			Must_be_execute_at *string `json:"must_be_execute_at,omitempty"`
-			Scheduled_at *string `json:"scheduled_at"` 
-			Picked_at *string `json:"picked_at,omitempty"`
-			Started_at *string `json:"started_at,omitempty"`
-			Completed_at *string `json:"completed_at,omitempty"`
-			Failed_at *string `json:"failed_at,omitempty"`
+			Scheduled_at       *string `json:"scheduled_at"`
+			Picked_at          *string `json:"picked_at,omitempty"`
+			Started_at         *string `json:"started_at,omitempty"`
+			Completed_at       *string `json:"completed_at,omitempty"`
+			Failed_at          *string `json:"failed_at,omitempty"`
 		}{
-			TaskID: task.ID,
-			Command: task.Command,
+			TaskID:             task.ID,
+			Command:            task.Command,
 			Must_be_execute_at: formatPointedTime(task.MustBeExecuteAt),
-			Scheduled_at: formatPointedTime(task.ScheduledAt),
-			Picked_at: formatPointedTime(task.PickedAt),
-			Started_at: formatPointedTime(task.StartedAt),
-			Completed_at: formatPointedTime(task.CompletedAt),
-			Failed_at: formatPointedTime(task.FailedAt),
+			Scheduled_at:       formatPointedTime(task.ScheduledAt),
+			Picked_at:          formatPointedTime(task.PickedAt),
+			Started_at:         formatPointedTime(task.StartedAt),
+			Completed_at:       formatPointedTime(task.CompletedAt),
+			Failed_at:          formatPointedTime(task.FailedAt),
 		}
 
 		jsonResponse, err := json.Marshal(response)
-		if err != nil{
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -239,8 +237,8 @@ func (s *SchedulerServer) insertTaskIntoDB(ctx context.Context, task Task) (stri
 	return insertedId, nil
 }
 
-func formatPointedTime(t *time.Time) *string{
-	if t == nil{
+func formatPointedTime(t *time.Time) *string {
+	if t == nil {
 		return nil
 	}
 
@@ -248,32 +246,31 @@ func formatPointedTime(t *time.Time) *string{
 	return &s
 }
 
-func (s *SchedulerServer) awaitShutdown() error {
+func (s *SchedulerServer) awaitShutdown() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 	defer signal.Stop(stop)
 
 	<-stop
 
-	return s.Stop()
+	s.Stop()
 }
 
-func (s *SchedulerServer) Stop() error {
-	var err error
-
+func (s *SchedulerServer) Stop(){
 	stopOnce.Do(func() {
-		defer log.Println("Connect to database stopped")
-		defer s.dbPool.Close()
-
-		s.cancel()
-
 		if s.httpServer != nil {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 			defer cancel()
 
-			err = s.httpServer.Shutdown(ctx)
+			if err := s.httpServer.Shutdown(ctx); err != nil{
+				log.Printf("Error while shutting down http server: %s", err)
+			}
 		}
 
+		s.cancel()
+
+		s.dbPool.Close()
+
+		log.Println("Connect to database stopped")
 	})
-	return err
 }

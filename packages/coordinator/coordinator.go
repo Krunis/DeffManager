@@ -77,11 +77,11 @@ func (c *CoordinatorServer) Start() {
 		log.Fatalf("Failed to connect to DB: %s", err)
 	}
 
-	go c.pollingDB()
-
 	if err = c.startGRPCServer(); err != nil {
 		log.Fatalf("Failed to start gRPC: %s", err)
 	}
+
+	go c.pollingDB()
 
 	go c.manageWorkerPool()
 
@@ -103,7 +103,7 @@ func (c *CoordinatorServer) startGRPCServer() error {
 
 	go func() {
 		if err = c.grpcServer.Serve(c.lis); err != nil {
-			log.Fatalf("gRPC server coordinator failed: %s", err)
+			log.Fatalf("GRPC server coordinator failed: %s", err)
 		}
 	}()
 
@@ -156,9 +156,8 @@ func (c *CoordinatorServer) executeDefferedTasks() {
 		log.Printf("Failed to query: %s", err)
 	}
 	
-
 	var id, command string
-	var tasks []*pb.TaskRequest
+	var tasks = []*pb.TaskRequest{}
 
 	for rows.Next() {
 		if err := rows.Scan(&id, &command); err != nil {
@@ -228,9 +227,6 @@ func (c *CoordinatorServer) awaitShutdown() {
 
 func (c *CoordinatorServer) Stop() {
 	c.stopOnce.Do(func() {
-		defer log.Println("Database pool stopped")
-		defer c.dbpool.Close()
-
 		if c.grpcServer != nil {
 			c.grpcServer.GracefulStop()
 		}
@@ -254,6 +250,9 @@ func (c *CoordinatorServer) Stop() {
 		}
 
 		c.workerPoolMutex.Unlock()
+
+		c.dbpool.Close()
+		log.Println("Database pool stopped")
 	})
 
 }

@@ -238,6 +238,11 @@ func (w *WorkerServer) Stop() {
 		w.cancel()
 
 		w.wg.Wait()
+
+		if w.lis != nil{
+			w.lis.Close()
+		}
+
 		if w.coordinatorConn != nil {
 			if err := w.coordinatorConn.Close(); err != nil {
 				log.Printf("Failed to close connection to coordinator: %s", err)
