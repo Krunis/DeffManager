@@ -73,6 +73,7 @@ func (s *SchedulerServer) Start() error {
 
 	s.httpServer = &http.Server{Addr: s.port, Handler: s.mux}
 
+	
 	errCh := make(chan error, 1)
 
 	go func() {
