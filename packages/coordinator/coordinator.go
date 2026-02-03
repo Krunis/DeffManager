@@ -34,10 +34,10 @@ type CoordinatorServer struct {
 	dbpool             *pgxpool.Pool
 	dbConnectionString string
 
-	workerPool          map[uint32]*workerInfo
-	workerPoolMutex     sync.Mutex
-	workerPoolKeys      []uint32
-	workerPoolKeysMutex sync.RWMutex
+	WorkerPool          map[uint32]*workerInfo
+	WorkerPoolMutex     sync.Mutex
+	WorkerPoolKeys      []uint32
+	WorkerPoolKeysMutex sync.RWMutex
 
 	roundRobinIndex uint32
 
@@ -63,13 +63,13 @@ func NewCoordinatorServer(port string, dbConnectionString string) *CoordinatorSe
 	return &CoordinatorServer{
 		port:               port,
 		dbConnectionString: dbConnectionString,
-		workerPool: make(map[uint32]*workerInfo),
+		WorkerPool: make(map[uint32]*workerInfo),
 		ctx:                ctx,
 		cancel:             cancel,
 	}
 }
 
-func (c *CoordinatorServer) Start() {
+func (c *CoordinatorServer) Start() error {
 	var err error
 
 	c.dbpool, err = common.ConnectToDB(c.ctx, c.dbConnectionString)
@@ -86,6 +86,8 @@ func (c *CoordinatorServer) Start() {
 	go c.manageWorkerPool()
 
 	c.awaitShutdown()
+
+	return nil
 }
 
 func (c *CoordinatorServer) startGRPCServer() error {
@@ -202,14 +204,14 @@ func (c *CoordinatorServer) submitTaskToWorker(task *pb.TaskRequest) error {
 }
 
 func (c *CoordinatorServer) getNextWorker() *workerInfo {
-	c.workerPoolMutex.Lock()
-	defer c.workerPoolMutex.Unlock()
+	c.WorkerPoolMutex.Lock()
+	defer c.WorkerPoolMutex.Unlock()
 
-	if len(c.workerPool) == 0 {
+	if len(c.WorkerPool) == 0 {
 		return nil
 	}
 
-	worker := c.workerPool[c.workerPoolKeys[c.roundRobinIndex%uint32(len(c.workerPool))]]
+	worker := c.WorkerPool[c.WorkerPoolKeys[c.roundRobinIndex%uint32(len(c.WorkerPool))]]
 
 	c.roundRobinIndex++
 	return worker
@@ -239,9 +241,9 @@ func (c *CoordinatorServer) Stop() {
 			c.lis.Close()
 		}
 
-		c.workerPoolMutex.Lock()
+		c.WorkerPoolMutex.Lock()
 
-		for _, worker := range c.workerPool {
+		for _, worker := range c.WorkerPool {
 			if worker.grpcConn != nil {
 				if err := worker.grpcConn.Close(); err != nil {
 					log.Printf("Failed to close client conn with %s: %s\n", worker.address, err)
@@ -249,7 +251,7 @@ func (c *CoordinatorServer) Stop() {
 			}
 		}
 
-		c.workerPoolMutex.Unlock()
+		c.WorkerPoolMutex.Unlock()
 
 		c.dbpool.Close()
 		log.Println("Database pool stopped")
@@ -273,25 +275,25 @@ func (c *CoordinatorServer) manageWorkerPool() {
 }
 
 func (c *CoordinatorServer) removeInactiveWorkers() {
-	c.workerPoolMutex.Lock()
-	defer c.workerPoolMutex.Unlock()
+	c.WorkerPoolMutex.Lock()
+	defer c.WorkerPoolMutex.Unlock()
 
-	for workerID, worker := range c.workerPool {
+	for workerID, worker := range c.WorkerPool {
 		if worker.heartbeatMisses > 1 {
 			log.Printf("Removing inactive worker: %d\n", workerID)
 
 			worker.grpcConn.Close()
-			delete(c.workerPool, workerID)
+			delete(c.WorkerPool, workerID)
 
-			c.workerPoolKeysMutex.Lock()
+			c.WorkerPoolKeysMutex.Lock()
 
-			c.workerPoolKeys = make([]uint32, 0, len(c.workerPool))
+			c.WorkerPoolKeys = make([]uint32, 0, len(c.WorkerPool))
 
-			for key := range c.workerPool {
-				c.workerPoolKeys = append(c.workerPoolKeys, key)
+			for key := range c.WorkerPool {
+				c.WorkerPoolKeys = append(c.WorkerPoolKeys, key)
 			}
 
-			c.workerPoolKeysMutex.Unlock()
+			c.WorkerPoolKeysMutex.Unlock()
 		} else {
 			worker.heartbeatMisses++
 		}
@@ -299,12 +301,12 @@ func (c *CoordinatorServer) removeInactiveWorkers() {
 }
 
 func (c *CoordinatorServer) SendHeartbeat(ctx context.Context, r *pb.HeartbeatRequest) (*pb.HeartbeatResponse, error) {
-	c.workerPoolMutex.Lock()
-	defer c.workerPoolMutex.Unlock()
+	c.WorkerPoolMutex.Lock()
+	defer c.WorkerPoolMutex.Unlock()
 
 	workerID := r.GetWorkerId()
 
-	if worker, ok := c.workerPool[workerID]; ok {
+	if worker, ok := c.WorkerPool[workerID]; ok {
 		worker.heartbeatMisses = 0
 
 		log.Printf("Reset heartbeat miss for worker: %d\n", workerID)
@@ -315,18 +317,18 @@ func (c *CoordinatorServer) SendHeartbeat(ctx context.Context, r *pb.HeartbeatRe
 			return nil, err
 		}
 
-		c.workerPool[workerID] = &workerInfo{
+		c.WorkerPool[workerID] = &workerInfo{
 			address:  r.GetAddress(),
 			grpcConn: conn,
 			client:   pb.NewWorkerServiceClient(conn),
 		}
 
-		c.workerPoolKeysMutex.Lock()
-		defer c.workerPoolKeysMutex.Unlock()
+		c.WorkerPoolKeysMutex.Lock()
+		defer c.WorkerPoolKeysMutex.Unlock()
 
-		c.workerPoolKeys = make([]uint32, 0, len(c.workerPool))
-		for key := range c.workerPool {
-			c.workerPoolKeys = append(c.workerPoolKeys, key)
+		c.WorkerPoolKeys = make([]uint32, 0, len(c.WorkerPool))
+		for key := range c.WorkerPool {
+			c.WorkerPoolKeys = append(c.WorkerPoolKeys, key)
 		}
 
 		log.Printf("Registered worker: %d\n", workerID)

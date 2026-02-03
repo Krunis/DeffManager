@@ -35,7 +35,8 @@ type WorkerServer struct {
 	coordinatorConn    *grpc.ClientConn
 
 	taskQueue     chan *pb.TaskRequest
-	receivedTasks []*pb.TaskRequest
+	ReceivedTasks []*pb.TaskRequest
+	ReceivedTasksMutex sync.Mutex
 
 	wg sync.WaitGroup
 
@@ -53,13 +54,13 @@ func NewWorkerServer(coordinatorAddress string, workerPort string) *WorkerServer
 		port:               workerPort,
 		coordinatorAddress: coordinatorAddress,
 		taskQueue:          make(chan *pb.TaskRequest),
-		receivedTasks:      make([]*pb.TaskRequest, 0),
+		ReceivedTasks:      make([]*pb.TaskRequest, 0),
 		ctx:                ctx,
 		cancel:             cancel,
 	}
 }
 
-func (w *WorkerServer) Start() {
+func (w *WorkerServer) Start() error{
 	go w.createWorker()
 
 	if err := w.connectToCoordinator(); err != nil {
@@ -73,6 +74,8 @@ func (w *WorkerServer) Start() {
 	go w.sendHeartbeat()
 
 	w.awaitShutdown()
+	
+	return nil
 }
 
 func (w *WorkerServer) startGRPCServer() error {
@@ -213,7 +216,7 @@ func (w *WorkerServer) updateTaskStatus(r *pb.TaskRequest, status pb.TaskStatus)
 func (w *WorkerServer) SubmitTask(ctx context.Context, r *pb.TaskRequest) (*pb.TaskResponse, error) {
 	log.Printf("Received task: %s", r.GetTaskId())
 
-	w.receivedTasks = append(w.receivedTasks, r)
+	w.ReceivedTasks = append(w.ReceivedTasks, r)
 	w.taskQueue <- r
 
 	return &pb.TaskResponse{TaskId: r.GetTaskId(), Success: true}, nil

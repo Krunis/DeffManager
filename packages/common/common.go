@@ -11,6 +11,10 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
+const (
+	DefaultHeartbeat = 5 * time.Second
+)
+
 func GetDBConnectionString() string {
 	var missingEnvVars []string
 

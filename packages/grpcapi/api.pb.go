@@ -174,6 +174,102 @@ func (x *TaskResponse) GetSuccess() bool {
 	return false
 }
 
+type ClientTaskRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          string                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientTaskRequest) Reset() {
+	*x = ClientTaskRequest{}
+	mi := &file_packages_grpcapi_api_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientTaskRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientTaskRequest) ProtoMessage() {}
+
+func (x *ClientTaskRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_packages_grpcapi_api_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientTaskRequest.ProtoReflect.Descriptor instead.
+func (*ClientTaskRequest) Descriptor() ([]byte, []int) {
+	return file_packages_grpcapi_api_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ClientTaskRequest) GetData() string {
+	if x != nil {
+		return x.Data
+	}
+	return ""
+}
+
+type ClientTaskResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	TaskId        string                 `protobuf:"bytes,3,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientTaskResponse) Reset() {
+	*x = ClientTaskResponse{}
+	mi := &file_packages_grpcapi_api_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientTaskResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientTaskResponse) ProtoMessage() {}
+
+func (x *ClientTaskResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_packages_grpcapi_api_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientTaskResponse.ProtoReflect.Descriptor instead.
+func (*ClientTaskResponse) Descriptor() ([]byte, []int) {
+	return file_packages_grpcapi_api_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ClientTaskResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *ClientTaskResponse) GetTaskId() string {
+	if x != nil {
+		return x.TaskId
+	}
+	return ""
+}
+
 type HeartbeatRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	WorkerId      uint32                 `protobuf:"varint,1,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"`
@@ -184,7 +280,7 @@ type HeartbeatRequest struct {
 
 func (x *HeartbeatRequest) Reset() {
 	*x = HeartbeatRequest{}
-	mi := &file_packages_grpcapi_api_proto_msgTypes[2]
+	mi := &file_packages_grpcapi_api_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -196,7 +292,7 @@ func (x *HeartbeatRequest) String() string {
 func (*HeartbeatRequest) ProtoMessage() {}
 
 func (x *HeartbeatRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_packages_grpcapi_api_proto_msgTypes[2]
+	mi := &file_packages_grpcapi_api_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -209,7 +305,7 @@ func (x *HeartbeatRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HeartbeatRequest.ProtoReflect.Descriptor instead.
 func (*HeartbeatRequest) Descriptor() ([]byte, []int) {
-	return file_packages_grpcapi_api_proto_rawDescGZIP(), []int{2}
+	return file_packages_grpcapi_api_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *HeartbeatRequest) GetWorkerId() uint32 {
@@ -235,7 +331,7 @@ type HeartbeatResponse struct {
 
 func (x *HeartbeatResponse) Reset() {
 	*x = HeartbeatResponse{}
-	mi := &file_packages_grpcapi_api_proto_msgTypes[3]
+	mi := &file_packages_grpcapi_api_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -247,7 +343,7 @@ func (x *HeartbeatResponse) String() string {
 func (*HeartbeatResponse) ProtoMessage() {}
 
 func (x *HeartbeatResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_packages_grpcapi_api_proto_msgTypes[3]
+	mi := &file_packages_grpcapi_api_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -260,7 +356,7 @@ func (x *HeartbeatResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HeartbeatResponse.ProtoReflect.Descriptor instead.
 func (*HeartbeatResponse) Descriptor() ([]byte, []int) {
-	return file_packages_grpcapi_api_proto_rawDescGZIP(), []int{3}
+	return file_packages_grpcapi_api_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *HeartbeatResponse) GetAcknowledged() bool {
@@ -283,7 +379,7 @@ type UpdateTaskStatusRequest struct {
 
 func (x *UpdateTaskStatusRequest) Reset() {
 	*x = UpdateTaskStatusRequest{}
-	mi := &file_packages_grpcapi_api_proto_msgTypes[4]
+	mi := &file_packages_grpcapi_api_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -295,7 +391,7 @@ func (x *UpdateTaskStatusRequest) String() string {
 func (*UpdateTaskStatusRequest) ProtoMessage() {}
 
 func (x *UpdateTaskStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_packages_grpcapi_api_proto_msgTypes[4]
+	mi := &file_packages_grpcapi_api_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -308,7 +404,7 @@ func (x *UpdateTaskStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTaskStatusRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTaskStatusRequest) Descriptor() ([]byte, []int) {
-	return file_packages_grpcapi_api_proto_rawDescGZIP(), []int{4}
+	return file_packages_grpcapi_api_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UpdateTaskStatusRequest) GetTaskId() string {
@@ -355,7 +451,7 @@ type UpdateTaskStatusResponse struct {
 
 func (x *UpdateTaskStatusResponse) Reset() {
 	*x = UpdateTaskStatusResponse{}
-	mi := &file_packages_grpcapi_api_proto_msgTypes[5]
+	mi := &file_packages_grpcapi_api_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -367,7 +463,7 @@ func (x *UpdateTaskStatusResponse) String() string {
 func (*UpdateTaskStatusResponse) ProtoMessage() {}
 
 func (x *UpdateTaskStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_packages_grpcapi_api_proto_msgTypes[5]
+	mi := &file_packages_grpcapi_api_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -380,7 +476,7 @@ func (x *UpdateTaskStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTaskStatusResponse.ProtoReflect.Descriptor instead.
 func (*UpdateTaskStatusResponse) Descriptor() ([]byte, []int) {
-	return file_packages_grpcapi_api_proto_rawDescGZIP(), []int{5}
+	return file_packages_grpcapi_api_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UpdateTaskStatusResponse) GetSuccess() bool {
@@ -400,7 +496,12 @@ const file_packages_grpcapi_api_proto_rawDesc = "" +
 	"\acommand\x18\x02 \x01(\tR\acommand\"A\n" +
 	"\fTaskResponse\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\tR\x06taskId\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\"I\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\"'\n" +
+	"\x11ClientTaskRequest\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\tR\x04data\"G\n" +
+	"\x12ClientTaskResponse\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12\x17\n" +
+	"\atask_id\x18\x03 \x01(\tR\x06taskId\"I\n" +
 	"\x10HeartbeatRequest\x12\x1b\n" +
 	"\tworker_id\x18\x01 \x01(\rR\bworkerId\x12\x18\n" +
 	"\aaddress\x18\x02 \x01(\tR\aaddress\"7\n" +
@@ -423,8 +524,10 @@ const file_packages_grpcapi_api_proto_rawDesc = "" +
 	"\tCOMPLETED\x10\x022J\n" +
 	"\rWorkerService\x129\n" +
 	"\n" +
-	"SubmitTask\x12\x14.grpcapi.TaskRequest\x1a\x15.grpcapi.TaskResponse2\xb5\x01\n" +
-	"\x12CoordinatorService\x12F\n" +
+	"SubmitTask\x12\x14.grpcapi.TaskRequest\x1a\x15.grpcapi.TaskResponse2\xfe\x01\n" +
+	"\x12CoordinatorService\x12G\n" +
+	"\n" +
+	"SubmitTask\x12\x1a.grpcapi.ClientTaskRequest\x1a\x1b.grpcapi.ClientTaskResponse\"\x00\x12F\n" +
 	"\rSendHeartbeat\x12\x19.grpcapi.HeartbeatRequest\x1a\x1a.grpcapi.HeartbeatResponse\x12W\n" +
 	"\x10UpdateTaskStatus\x12 .grpcapi.UpdateTaskStatusRequest\x1a!.grpcapi.UpdateTaskStatusResponseB'Z%github.com/krunis/DeffManager/grpcapib\x06proto3"
 
@@ -441,26 +544,30 @@ func file_packages_grpcapi_api_proto_rawDescGZIP() []byte {
 }
 
 var file_packages_grpcapi_api_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_packages_grpcapi_api_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_packages_grpcapi_api_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_packages_grpcapi_api_proto_goTypes = []any{
 	(TaskStatus)(0),                  // 0: grpcapi.TaskStatus
 	(*TaskRequest)(nil),              // 1: grpcapi.TaskRequest
 	(*TaskResponse)(nil),             // 2: grpcapi.TaskResponse
-	(*HeartbeatRequest)(nil),         // 3: grpcapi.HeartbeatRequest
-	(*HeartbeatResponse)(nil),        // 4: grpcapi.HeartbeatResponse
-	(*UpdateTaskStatusRequest)(nil),  // 5: grpcapi.UpdateTaskStatusRequest
-	(*UpdateTaskStatusResponse)(nil), // 6: grpcapi.UpdateTaskStatusResponse
+	(*ClientTaskRequest)(nil),        // 3: grpcapi.ClientTaskRequest
+	(*ClientTaskResponse)(nil),       // 4: grpcapi.ClientTaskResponse
+	(*HeartbeatRequest)(nil),         // 5: grpcapi.HeartbeatRequest
+	(*HeartbeatResponse)(nil),        // 6: grpcapi.HeartbeatResponse
+	(*UpdateTaskStatusRequest)(nil),  // 7: grpcapi.UpdateTaskStatusRequest
+	(*UpdateTaskStatusResponse)(nil), // 8: grpcapi.UpdateTaskStatusResponse
 }
 var file_packages_grpcapi_api_proto_depIdxs = []int32{
 	0, // 0: grpcapi.UpdateTaskStatusRequest.status:type_name -> grpcapi.TaskStatus
 	1, // 1: grpcapi.WorkerService.SubmitTask:input_type -> grpcapi.TaskRequest
-	3, // 2: grpcapi.CoordinatorService.SendHeartbeat:input_type -> grpcapi.HeartbeatRequest
-	5, // 3: grpcapi.CoordinatorService.UpdateTaskStatus:input_type -> grpcapi.UpdateTaskStatusRequest
-	2, // 4: grpcapi.WorkerService.SubmitTask:output_type -> grpcapi.TaskResponse
-	4, // 5: grpcapi.CoordinatorService.SendHeartbeat:output_type -> grpcapi.HeartbeatResponse
-	6, // 6: grpcapi.CoordinatorService.UpdateTaskStatus:output_type -> grpcapi.UpdateTaskStatusResponse
-	4, // [4:7] is the sub-list for method output_type
-	1, // [1:4] is the sub-list for method input_type
+	3, // 2: grpcapi.CoordinatorService.SubmitTask:input_type -> grpcapi.ClientTaskRequest
+	5, // 3: grpcapi.CoordinatorService.SendHeartbeat:input_type -> grpcapi.HeartbeatRequest
+	7, // 4: grpcapi.CoordinatorService.UpdateTaskStatus:input_type -> grpcapi.UpdateTaskStatusRequest
+	2, // 5: grpcapi.WorkerService.SubmitTask:output_type -> grpcapi.TaskResponse
+	4, // 6: grpcapi.CoordinatorService.SubmitTask:output_type -> grpcapi.ClientTaskResponse
+	6, // 7: grpcapi.CoordinatorService.SendHeartbeat:output_type -> grpcapi.HeartbeatResponse
+	8, // 8: grpcapi.CoordinatorService.UpdateTaskStatus:output_type -> grpcapi.UpdateTaskStatusResponse
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -477,7 +584,7 @@ func file_packages_grpcapi_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_packages_grpcapi_api_proto_rawDesc), len(file_packages_grpcapi_api_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

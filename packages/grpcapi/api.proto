@@ -27,10 +27,21 @@ message TaskResponse{
 
 //Coordinator service
 service CoordinatorService{
+    //Submits a task directly (for tests)
+    rpc SubmitTask (ClientTaskRequest) returns (ClientTaskResponse) {}
     //Sends a heartbeat to coordinator
     rpc SendHeartbeat(HeartbeatRequest) returns (HeartbeatResponse);
     //Sends an info for update task in DB
     rpc UpdateTaskStatus(UpdateTaskStatusRequest) returns (UpdateTaskStatusResponse);
+}
+
+message ClientTaskRequest {
+  string data = 1;
+}
+
+message ClientTaskResponse {
+  string message = 2;
+  string task_id = 3;
 }
 
 message HeartbeatRequest{

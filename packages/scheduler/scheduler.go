@@ -96,6 +96,7 @@ func (s *SchedulerServer) handlePostTask(w http.ResponseWriter, r *http.Request)
 	select {
 	case <-r.Context().Done():
 		log.Println("Request cancelled (shutdown or client disconnected)")
+		return
 
 	default:
 		if r.Method != "POST" {
