@@ -1,3 +1,10 @@
+#Deffered manager
+![alt text](static/blockschema.png)
+
+- Scheduler получает задачи от клиентов и планирует их в Postgres
+- Coordinator отвечает за выбор задач которые нужно сейчас выполнить. Формирует **пул worker'ов** и распределяет задачи принципом **round-robin**
+- Worker отвечают за выполнение задач. После завершения задач работник отправляет coordinator'у о **статусе**. Worker'ы регистрируются и посылают **heartbeat**
+
 ## Creating protobuf files with "protobuf_gen-dockerfile" "buf.gen.yaml" "buf.yaml":
 
 ```sh
